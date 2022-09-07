@@ -72,5 +72,21 @@ class SpringBootEmployeeApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender", containsInAnyOrder("Female", "Female")));
 //        //then
 	}
+	@Test
+	void should_get_all_employees_by_page_when_perform_get_given_employee_page_and_page_size() throws Exception {
+//        //given
+		employeeRepository.createNewRecord(new Employee(1, "Hugo First", 25, "Male", 45300));
+		employeeRepository.createNewRecord(new Employee(2, "Olive Tree", 28, "Female", 35600));
+		employeeRepository.createNewRecord(new Employee(3, "Percy Vere", 21, "Male", 25300));
+		employeeRepository.createNewRecord(new Employee(4, "Fay Daway", 35, "Female", 35100));
+		employeeRepository.createNewRecord(new Employee(5, "Bess Twishes", 43, "Female", 55200));
+//        //when
+		client.perform(MockMvcRequestBuilders.get("/employees?page={page}&pageSize={pageSize}", 1,2))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].employeeName", containsInAnyOrder("Hugo First", "Olive Tree")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender", containsInAnyOrder("Male", "Female")));
+//        //then
+	}
 
 	}
