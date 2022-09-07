@@ -1,5 +1,6 @@
 package com.rest.springbootemployee;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rest.springbootemployee.employee.Employee;
 import com.rest.springbootemployee.employee.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,20 +96,8 @@ class EmployeeControllerTest {
 	@Test
 	void should_post_new_employee_when_perform_post_given_employee() throws Exception {
 //        //given
-		String employeeName = "Ruby";
-		String gender = "Female";
-		Integer age = 19;
-		Integer salary = 999999;
-		String requestBody = MessageFormat.format(
-
-				"\"employeeID\":{4}," +
-				"\"employeeName\":\"{0}\"," +
-				"\"gender\":\"{1}\"," +
-				"\"age\":{2}," +
-				"\"salary\":{3}" +
-				"" ,
-				employeeName,gender,age,String.valueOf(salary),4);
-		requestBody = "{ " +requestBody+"}";
+		String requestBody  = new ObjectMapper().writeValueAsString(
+				new Employee(4, "Fay Daway", 35, "Female", 35100));
 //        //when
 		client.perform(MockMvcRequestBuilders.post("/employees", requestBody)
 						.contentType(MediaType.APPLICATION_JSON)
@@ -119,8 +108,8 @@ class EmployeeControllerTest {
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(1)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeID").isNumber())
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeName").value("Ruby"))
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(999999));
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeName").value("Fay Daway"))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(35100));
 	}
 
 	}
