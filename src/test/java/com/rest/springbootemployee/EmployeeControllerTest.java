@@ -7,9 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.text.MessageFormat;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
@@ -89,33 +92,35 @@ class EmployeeControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender", containsInAnyOrder("Male", "Female")));
 //        //then
 	}
-//	@Test
-//	void should_post_new_employee_when_perform_post_given_employee() throws Exception {
-////        //given
-//		String employeeName = "Ruby";
-//		String gender = "Female";
-//		Integer age = 19;
-//		Integer salary = 999999;
-//		String requestBody = MessageFormat.format(
-//				"\"employeeID\":\"{0}\","
-//				"\"employeeName\":\"{0}\"," +
-//				"\"gender\":\"{1}\"," +
-//				"\"age\":{2}," +
-//				"\"salary\":{3}" +
-//				"" ,
-//				employeeName,gender,age,String.valueOf(salary));
-//
-////        //when
-//		client.perform(MockMvcRequestBuilders.post("/employees", "{ " +requestBody+
-//						"}"))
-//				.andExpect(MockMvcResultMatchers.status().isCreated());
-////        //then
-//		client.perform(MockMvcRequestBuilders.get("/employees/"))
-//				.andExpect(MockMvcResultMatchers.status().isOk())
-//				.andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(1)))
-//				.andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeID").isNumber())
-//				.andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeName").value("Ruby"))
-//				.andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(999999));
-//	}
+	@Test
+	void should_post_new_employee_when_perform_post_given_employee() throws Exception {
+//        //given
+		String employeeName = "Ruby";
+		String gender = "Female";
+		Integer age = 19;
+		Integer salary = 999999;
+		String requestBody = MessageFormat.format(
+
+				"\"employeeID\":{4}," +
+				"\"employeeName\":\"{0}\"," +
+				"\"gender\":\"{1}\"," +
+				"\"age\":{2}," +
+				"\"salary\":{3}" +
+				"" ,
+				employeeName,gender,age,String.valueOf(salary),4);
+		requestBody = "{ " +requestBody+"}";
+//        //when
+		client.perform(MockMvcRequestBuilders.post("/employees", requestBody)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestBody))
+				.andExpect(MockMvcResultMatchers.status().isCreated());
+//        //then
+		client.perform(MockMvcRequestBuilders.get("/employees/"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(1)))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeID").isNumber())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeName").value("Ruby"))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(999999));
+	}
 
 	}
