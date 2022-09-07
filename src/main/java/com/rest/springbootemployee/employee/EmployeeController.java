@@ -1,5 +1,6 @@
 package com.rest.springbootemployee.employee;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,46 +9,48 @@ import java.util.List;
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
-    private EmployeeRepository employeeRepository;
 
-    public EmployeeController (EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    @Autowired
+    private final EmployeeService employeeService;
+
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping
     public List<Employee> getAllEmployees () {
-        return employeeRepository.fetchAllRecords();
+        return employeeService.findAll();
     }
 
     @GetMapping("/{employeeID}")
     public Employee getEmployeeByID (@PathVariable Integer employeeID) {
-        return employeeRepository.findByID(employeeID);
+        return employeeService.findByID(employeeID);
     }
 
     @GetMapping(params = {"gender"})
     public List<Employee> getEmployeesByGender (@RequestParam String gender) {
-        return employeeRepository.findByGender(gender);
+        return employeeService.findByGender(gender);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Employee addNewEmployee (@RequestBody Employee employee) {
-        return employeeRepository.createNewRecord(employee);
+        return employeeService.createNewRecord(employee);
     }
 
     @PutMapping("/{employeeID}")
     public Employee updateEmployee (@PathVariable Integer employeeID, @RequestBody Employee employee) {
-        return employeeRepository.updateExistingRecord(employeeID, employee);
+        return employeeService.updateById(employeeID, employee);
     }
 
     @DeleteMapping("/{employeeID}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEmployee (@PathVariable Integer employeeID) {
-        employeeRepository.deleteRecord(employeeID);
+        employeeService.deleteRecord(employeeID);
     }
 
     @GetMapping(params = {"page", "pageSize"})
     public List<Employee> getEmployeesByPage (@RequestParam Integer page, Integer pageSize) {
-        return employeeRepository.fetchRecordsByPage(page, pageSize);
+        return employeeService.fetchRecordsByPage(page, pageSize);
     }
 }

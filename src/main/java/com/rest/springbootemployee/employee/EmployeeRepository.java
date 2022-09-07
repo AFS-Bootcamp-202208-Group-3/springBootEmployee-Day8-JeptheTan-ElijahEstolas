@@ -46,20 +46,15 @@ public class EmployeeRepository {
 
     private Integer generateNewID () {
         int newID = employees.stream()
-                .mapToInt(employee -> employee.getEmployeeID())
+                .mapToInt(Employee::getEmployeeID)
                 .max()
                 .orElse(1);
         return ++newID;
     }
 
-    public Employee updateExistingRecord (Integer employeeID, Employee employee) {
-        Employee existingEmployee = findByID(employeeID);
-        if (Objects.nonNull(employee.getAge())) {
-            existingEmployee.setAge(employee.getAge());
-        }
-        if (Objects.nonNull(employee.getSalary())) {
-            existingEmployee.setSalary(employee.getSalary());
-        }
+    public Employee updateExistingRecord (Employee employee) {
+        Employee existingEmployee = findByID(employee.getEmployeeID());
+        existingEmployee = employee;
         return existingEmployee;
     }
 
@@ -70,7 +65,7 @@ public class EmployeeRepository {
 
     public List<Employee> fetchRecordsByPage (Integer page, Integer pageSize) {
         return employees.stream()
-                .skip((page - 1) * pageSize)
+                .skip((long) (page - 1) * pageSize)
                 .limit(pageSize)
                 .collect(Collectors.toList());
     }
