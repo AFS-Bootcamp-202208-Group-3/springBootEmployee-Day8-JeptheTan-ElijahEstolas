@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class SpringBootEmployeeApplicationTests {
+class EmployeeControllerTest {
 
 
 	@Autowired
@@ -50,12 +50,12 @@ class SpringBootEmployeeApplicationTests {
 //        //given
 		Employee employee = employeeRepository.createNewRecord(new Employee(null, "Susan", 22, "Female", 10000));
 //        //when
-		client.perform(MockMvcRequestBuilders.get("/employees/{employeeID}", Integer.getInteger(String.valueOf(employee.getEmployeeID()))))
+		client.perform(MockMvcRequestBuilders.get("/employees/{employeeID}", employee.getEmployeeID()))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 //                .andDo(print())
-				.andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeID").isNumber())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeName").value("Susan"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employeeID").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employeeName").value("Susan"))
+				;
 //        //then
 	}
 
@@ -64,6 +64,7 @@ class SpringBootEmployeeApplicationTests {
 //        //given
 		employeeRepository.createNewRecord(new Employee(1, "Susan", 22, "Female", 10000));
 		employeeRepository.createNewRecord(new Employee(2, "Ruby", 22, "Female", 12000));
+		employeeRepository.createNewRecord(new Employee(3, "Ruby2", 22, "Male", 12000));
 //        //when
 		client.perform(MockMvcRequestBuilders.get("/employees?gender={gender}", "Female"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
@@ -88,5 +89,33 @@ class SpringBootEmployeeApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender", containsInAnyOrder("Male", "Female")));
 //        //then
 	}
+//	@Test
+//	void should_post_new_employee_when_perform_post_given_employee() throws Exception {
+////        //given
+//		String employeeName = "Ruby";
+//		String gender = "Female";
+//		Integer age = 19;
+//		Integer salary = 999999;
+//		String requestBody = MessageFormat.format(
+//				"\"employeeID\":\"{0}\","
+//				"\"employeeName\":\"{0}\"," +
+//				"\"gender\":\"{1}\"," +
+//				"\"age\":{2}," +
+//				"\"salary\":{3}" +
+//				"" ,
+//				employeeName,gender,age,String.valueOf(salary));
+//
+////        //when
+//		client.perform(MockMvcRequestBuilders.post("/employees", "{ " +requestBody+
+//						"}"))
+//				.andExpect(MockMvcResultMatchers.status().isCreated());
+////        //then
+//		client.perform(MockMvcRequestBuilders.get("/employees/"))
+//				.andExpect(MockMvcResultMatchers.status().isOk())
+//				.andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(1)))
+//				.andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeID").isNumber())
+//				.andExpect(MockMvcResultMatchers.jsonPath("$[0].employeeName").value("Ruby"))
+//				.andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(999999));
+//	}
 
 	}
